@@ -1,569 +1,191 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="stylesheet" href="style.css">
-    <title>MindFulSpace</title>
-<!-- Google Font -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThinkBoard Mobile Ready</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <style>
-  :root{
-    --bg:#0f1724;
-    --card:#0b1220;
-    --muted:#9fb2c9;
-    --accent:#7dd3fc;
-    --accent-2:#60a5fa;
-    --glass: rgba(255,255,255,0.03);
-    --note-shadow: 0 8px 30px rgba(2,6,23,0.6);
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  }
-  html,body{height:100%;margin:0;background:
-    radial-gradient(800px 300px at 10% 10%, rgba(96,165,250,0.04), transparent 10%),
-    linear-gradient(180deg,#071029 0%, #071623 60%, #061021 100%); color:#e6eef8;}
-  /* navbar */
-  .navbar{
-    height:64px; display:flex; align-items:center; justify-content:space-between;
-    padding:8px 20px; gap:12px; position:sticky; top:0; z-index:999;
-    backdrop-filter: blur(8px); background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
-    border-bottom: 1px solid rgba(255,255,255,0.02);
-  }
-  .brand{display:flex;align-items:center;gap:12px}
-  .logo {
-    width:44px;height:44px;border-radius:10px;
-    display:flex;align-items:center;justify-content:center;font-weight:700;
-    background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#05202b;
-    box-shadow:0 6px 18px rgba(96,165,250,0.08);
-    font-size:18px;
-  }
-  .title {font-weight:600;font-size:18px}
-  .nav-actions{display:flex;gap:8px;align-items:center}
-  .btn{background:transparent;border:1px solid rgba(255,255,255,0.05);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer;font-weight:600}
-  .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#05202b;border:none;box-shadow:0 8px 24px rgba(96,165,250,0.08)}
-  .search {padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;outline:none;min-width:200px}
-  /* layout */
-  .container{display:grid;grid-template-columns:260px 1fr;gap:18px;padding:20px;max-width:1400px;margin:18px auto;}
-  @media (max-width:980px){ .container{grid-template-columns:1fr; padding:12px} .sidebar{order:2} .board{order:1} }
-  .sidebar{background:var(--card);padding:16px;border-radius:14px;box-shadow:var(--note-shadow)}
-  .board{min-height:70vh;background:transparent;padding:10px;border-radius:12px}
-  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-  .meta {color:var(--muted);font-size:13px;margin-bottom:10px}
-  /* note styles */
-  .note {
-    position:absolute; width:220px; min-height:120px; padding:12px;border-radius:12px;
-    box-shadow:var(--note-shadow); background: #fff7; color:#08222a; user-select:text;
-    overflow:hidden; display:flex; flex-direction:column; gap:8px; transform-origin: top left;
-  }
-  .note .title{font-weight:700}
-  .note .content{flex:1;white-space:pre-wrap;overflow:auto;font-size:14px}
-  .note .note-footer{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:8px}
-  .note .small{font-size:12px;color:#184b51}
-  .note .note-actions{display:flex;gap:6px}
-  .note .icon-btn{background:transparent;border:none;padding:6px;border-radius:8px;cursor:pointer}
-  .note.locked{opacity:0.95}
-  /* colors */
-  .c-yellow{background:linear-gradient(180deg,#fff8db,#fff2b2)}
-  .c-pink{background:linear-gradient(180deg,#fff0f6,#ffd6e0)}
-  .c-green{background:linear-gradient(180deg,#eafff0,#bff5d1)}
-  .c-blue{background:linear-gradient(180deg,#ebf8ff,#c8f1ff)}
-  .c-grey{background:linear-gradient(180deg,#f7f7f8,#e9e9ec)}
-  /* toolbar inside note */
-  .color-picker{display:flex;gap:6px}
-  .color-swatch{width:18px;height:18px;border-radius:6px;cursor:pointer;border:1px solid rgba(0,0,0,0.06)}
-  /* helper area */
-  .hint{font-size:13px;color:var(--muted);margin-top:12px}
-  /* drag cursor */
-  .drag-handle{cursor:grab}
-  .dragging .drag-handle{cursor:grabbing}
-  /* grid/list toggle */
-  .grid { position:relative; min-height:70vh; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:12px; overflow:auto; }
-  .list-view .note { position:relative; margin-bottom:12px; left:auto; top:auto; }
-  /* footer small */
-  footer.app-footer{text-align:center;color:var(--muted);font-size:13px;margin-top:18px}
-  /* file input hidden */
-  #importFile{display:none}
+:root{
+  --bg:#0f1724;
+  --card:#0b1220;
+  --muted:#9fb2c9;
+  --accent:#7dd3fc;
+  --accent-2:#60a5fa;
+  --glass: rgba(255,255,255,0.03);
+  --note-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  font-family:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+/* Body & Animations */
+body{
+  margin:0; min-height:100vh; background: linear-gradient(180deg,#071029 0%, #071623 100%);
+  color:#e6eef8;
+  animation: fadeIn 0.6s ease;
+  transition: all 0.2s ease;
+}
+@keyframes fadeIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+/* Navbar */
+.navbar{
+  height:64px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px; gap:12px;
+  backdrop-filter: blur(8px); background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+  border-bottom:1px solid rgba(255,255,255,0.02);
+}
+.brand{display:flex; align-items:center; gap:12px;}
+.logo{width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#05202b; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; box-shadow:0 6px 18px rgba(96,165,250,0.08);}
+.title{font-weight:600; font-size:18px;}
+.meta{font-size:12px; color:var(--muted);}
+.search{padding:8px 12px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit; outline:none; min-width:180px;}
+
+/* Container */
+.container{display:grid; grid-template-columns:1fr; padding:16px; gap:12px; max-width:1400px; margin:0 auto;}
+.board{min-height:70vh; padding:12px; border-radius:12px; position:relative; background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);}
+
+/* Notes */
+.note{
+  position:absolute; width:200px; min-height:120px; padding:12px; border-radius:12px;
+  box-shadow: var(--note-shadow); color:#08222a;
+  display:flex; flex-direction:column; gap:8px;
+  animation: popIn 0.35s cubic-bezier(.17,.89,.32,1.28);
+  transform-origin: top left;
+  user-select:text; overflow:hidden;
+}
+@keyframes popIn{ 0%{transform:scale(.6) translateY(15px); opacity:0;} 100%{transform:scale(1); opacity:1;} }
+.note .title{font-weight:700;}
+.note .content{flex:1; font-size:14px; overflow:auto; white-space:pre-wrap;}
+.note .note-footer{display:flex; justify-content:space-between; gap:6px; align-items:center; margin-top:6px;}
+.note .icon-btn{background:transparent; border:none; padding:6px; border-radius:8px; cursor:pointer;}
+
+/* Color Picker - New vibrant colors */
+.color-picker{display:flex; gap:4px;}
+.color-swatch{
+  width:22px; height:22px; border-radius:6px; cursor:pointer; border:1px solid rgba(0,0,0,0.06);
+  transition:all 0.2s ease;
+}
+.color-swatch:hover{transform:scale(1.2);}
+.color1{background:linear-gradient(135deg,#FFEDD5,#FED7AA);}
+.color2{background:linear-gradient(135deg,#E0F2FE,#BAE6FD);}
+.color3{background:linear-gradient(135deg,#DCFCE7,#BBF7D0);}
+.color4{background:linear-gradient(135deg,#FDE2FF,#FBCFE8);}
+.color5{background:linear-gradient(135deg,#FFF9C2,#FEF08A);}
+
+/* Floating + button */
+.fab-container{position:fixed; bottom:24px; right:24px; z-index:999;}
+#fabBtn{
+  width:56px; height:56px; border-radius:50%; border:none; background:linear-gradient(135deg,#7dd3fc,#60a5fa); color:#05202b; font-size:28px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px rgba(96,165,250,0.3);
+  transition:all 0.2s ease;
+}
+#fabBtn:hover{transform:scale(1.1); box-shadow:0 12px 36px rgba(96,165,250,0.4);}
+.fab-menu{display:none; flex-direction:column; margin-bottom:10px; gap:8px; align-items:flex-end;}
+.fab-item{
+  padding:10px 16px; border-radius:12px; border:none; background:rgba(15,23,36,0.9); color:#e6eef8; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.3); transition: all 0.2s ease;
+}
+.fab-item:hover{background:rgba(96,165,250,0.2); transform:translateX(-4px);}
+
+/* Mobile responsiveness */
+@media(max-width:980px){ .search{width:100%;} }
+@media(max-width:600px){
+  .board{padding:8px;}
+  #fabBtn{width:50px;height:50px;font-size:24px;}
+  .fab-item{font-size:14px;}
+  .note{width:160px;}
+}
 </style>
 </head>
 <body>
-  <!-- NAVBAR -->
-  <div class="navbar">
-    <div class="brand">
-      <img src="mindflow-logo.svg" class="logo">
-      <div>
-        <div class="title">Mind Flow Space</div>
-        <div class="meta" style="font-size:12px;color:var(--muted)">برنامج لتنظيم الأفكار ومخططات اليوم</div>
-      </div>
-    </div>
 
-    <div style="display:flex;align-items:center;gap:10px">
-      <input id="searchInput" class="search" placeholder="ابحث داخل النوتات..." />
-      <div class="nav-actions">
-        <button id="addNoteBtn" class="btn primary">نوت جديدة</button>
-        <button id="exportBtn" class="btn">تصدير JSON</button>
-        <button id="importBtn" class="btn">استيراد</button>
-        <button id="clearBtn" class="btn">مسح الكل</button>
-      </div>
+<!-- Navbar -->
+<div class="navbar">
+  <div class="brand">
+    <div class="logo">T</div>
+    <div>
+      <div class="title">ThinkBoard</div>
+      <div class="meta">لوحة الأفكار والملاحظات</div>
     </div>
   </div>
+  <input type="text" class="search" placeholder="ابحث داخل النوتات..."/>
+</div>
 
-  <!-- MAIN -->
-  <div class="container">
-    <aside class="sidebar">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:700">لوحة الأدوات</div>
-        <div style="font-size:13px;color:var(--muted)">حفظ تلقائي</div>
-      </div>
+<!-- Main container -->
+<div class="container">
+  <main class="board" id="canvas"></main>
+</div>
 
-      <div class="controls" style="margin-top:12px">
-        <select id="filterSelect" class="btn">
-          <option value="all">عرض كل النوتات</option>
-          <option value="today">نوتات اليوم</option>
-        </select>
-        <select id="viewMode" class="btn">
-          <option value="free">وضع حر (سحب حر)</option>
-          <option value="grid">عرض شبكة</option>
-          <option value="list">عرض قائمة</option>
-        </select>
-      </div>
-
-      <div style="margin-top:12px">
-        <div style="font-weight:700;margin-bottom:6px">الأوسمة (Tags)</div>
-        <div id="tagsList"></div>
-        <input id="newTagInput" placeholder="اضف وسم جديد واضغط Enter" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);margin-top:8px" />
-      </div>
-
-      <div style="margin-top:16px">
-        <div style="font-weight:700">قائمة سريعة</div>
-        <div class="hint">اسحب النوت وحررها في أي مكان. اضغط على 🔒 لتثبيتها.</div>
-      </div>
-
-      <div style="margin-top:16px">
-        <div style="font-weight:700">التذكيرات</div>
-        <div style="font-size:13px;color:var(--muted);margin-top:8px">يمكن إضافة تذكير لكل نوت عبر تحريرها.</div>
-      </div>
-
-      <div style="margin-top:16px">
-        <button id="clearLocalBtn" class="btn">مسح التخزين المحلي</button>
-      </div>
-
-      <footer class="app-footer">© ThinkBoard — نسخة للتعلم والتطوير</footer>
-    </aside>
-
-    <main class="board">
-      <div id="canvas" class="grid"></div>
-    </main>
+<!-- Floating + button -->
+<div class="fab-container">
+  <button id="fabBtn">+</button>
+  <div class="fab-menu" id="fabMenu">
+    <button class="fab-item" onclick="addNote()">📝 Notes</button>
+    <button class="fab-item" onclick="startStopwatch()">⏱ Stopwatch</button>
+    <button class="fab-item" onclick="openLabels()">🏷 Labels</button>
   </div>
-
-  <input type="file" id="importFile" accept="application/json" />
+</div>
 
 <script>
-/* ======= ThinkBoard (Vanilla JS) =======
-   - Keeps state in localStorage (key: THINKBOARD_DATA)
-   - Notes are draggable and resizable
-   - Each note: {id, title, content, x, y, w, h, color, tags:[], locked, createdAt, reminderAt}
-======================================== */
-
-const STORAGE_KEY = 'THINKBOARD_DATA_v1';
-
-let state = { notes: [] }; // main state
 const canvas = document.getElementById('canvas');
-const addNoteBtn = document.getElementById('addNoteBtn');
-const exportBtn = document.getElementById('exportBtn');
-const importBtn = document.getElementById('importBtn');
-const importFile = document.getElementById('importFile');
-const clearBtn = document.getElementById('clearBtn');
-const clearLocalBtn = document.getElementById('clearLocalBtn');
-const searchInput = document.getElementById('searchInput');
-const filterSelect = document.getElementById('filterSelect');
-const viewMode = document.getElementById('viewMode');
-const tagsList = document.getElementById('tagsList');
-const newTagInput = document.getElementById('newTagInput');
+const fabBtn = document.getElementById('fabBtn');
+const fabMenu = document.getElementById('fabMenu');
+fabBtn.addEventListener('click', ()=>{ fabMenu.style.display = fabMenu.style.display==='flex'?'none':'flex'; });
+document.addEventListener('click', e=>{ if(!fabBtn.contains(e.target) && !fabMenu.contains(e.target)) fabMenu.style.display='none'; });
 
-function uid() { return 'n_'+Math.random().toString(36).slice(2,9); }
-function nowISO(){ return new Date().toISOString(); }
+/* Random colors */
+const colors = ['color1','color2','color3','color4','color5'];
 
-function loadState(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw) state = JSON.parse(raw);
-    else state = { notes: [] };
-  } catch(e){
-    console.error('load error', e); state = { notes: [] };
-  }
-}
-function saveState(){
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }catch(e){ console.error('save error', e); }
-}
-
-function createNoteObj(overrides = {}){
-  const defaultW = 240, defaultH = 160;
-  return Object.assign({
-    id: uid(),
-    title: 'نوت جديدة',
-    content: '',
-    x: 40 + Math.random()*200,
-    y: 40 + Math.random()*120,
-    w: defaultW,
-    h: defaultH,
-    color: 'c-yellow',
-    tags: [],
-    locked: false,
-    createdAt: nowISO(),
-    reminderAt: null
-  }, overrides);
-}
-
-function render(){
-  // adjust view mode
-  canvas.innerHTML = '';
-  const mode = viewMode.value;
-  if(mode === 'list') canvas.parentElement.classList.add('list-view'); else canvas.parentElement.classList.remove('list-view');
-  if(mode === 'grid') canvas.style.display = 'grid', canvas.style.gridTemplateColumns = 'repeat(auto-fill, minmax(260px, 1fr))';
-  else canvas.style.display = 'block', canvas.style.gridTemplateColumns = '';
-
-  // filters
-  const q = (searchInput.value || '').trim().toLowerCase();
-  const filter = filterSelect.value;
-  const todayDate = new Date().toISOString().slice(0,10);
-
-  const notesToShow = state.notes.filter(n=>{
-    if(filter === 'today'){
-      if(!n.reminderAt) return false;
-      return n.reminderAt.slice(0,10) === todayDate;
-    }
-    if(q){
-      return (n.title||'').toLowerCase().includes(q) || (n.content||'').toLowerCase().includes(q) || (n.tags||[]).join(' ').toLowerCase().includes(q);
-    }
-    return true;
-  });
-
-  notesToShow.forEach(n => {
-    const el = document.createElement('div');
-    el.className = 'note '+(n.color || 'c-yellow') + (n.locked ? ' locked' : '');
-    el.dataset.id = n.id;
-    el.style.left = (n.x || 40) + 'px';
-    el.style.top = (n.y || 40) + 'px';
-    el.style.width = (n.w || 220) + 'px';
-    el.style.height = (n.h || 140) + 'px';
-    // header
-    el.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-        <div class="title" contenteditable="true" data-edit="title" style="outline:none">${escapeHtml(n.title)}</div>
-        <div style="display:flex;gap:6px">
-          <button class="icon-btn drag-handle" title="سحب">☰</button>
-          <button class="icon-btn" data-action="pin" title="تثبيت/فك التثبيت">${n.locked ? '🔒' : '🔓'}</button>
-          <button class="icon-btn" data-action="delete" title="حذف">🗑️</button>
-        </div>
+function addNote(){
+  const n = document.createElement('div');
+  n.className='note '+colors[Math.floor(Math.random()*colors.length)];
+  n.style.left=(40+Math.random()*200)+'px';
+  n.style.top=(40+Math.random()*120)+'px';
+  n.innerHTML=`
+    <div class="title" contenteditable="true">نوت جديدة</div>
+    <div class="content" contenteditable="true"></div>
+    <div class="note-footer">
+      <button class="icon-btn" onclick="this.parentElement.parentElement.remove()">🗑️</button>
+      <div class="color-picker">
+        <div class="color-swatch color1" onclick="this.closest('.note').className='note color1'"></div>
+        <div class="color-swatch color2" onclick="this.closest('.note').className='note color2'"></div>
+        <div class="color-swatch color3" onclick="this.closest('.note').className='note color3'"></div>
+        <div class="color-swatch color4" onclick="this.closest('.note').className='note color4'"></div>
+        <div class="color-swatch color5" onclick="this.closest('.note').className='note color5'"></div>
       </div>
-      <div class="content" contenteditable="true" data-edit="content">${escapeHtml(n.content)}</div>
-      <div class="note-footer">
-        <div class="small tags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-        <div class="note-actions">
-          <div class="color-picker" title="اختر لون">
-            <div class="color-swatch" data-color="c-yellow" style="background:linear-gradient(180deg,#fff8db,#fff2b2)"></div>
-            <div class="color-swatch" data-color="c-pink" style="background:linear-gradient(180deg,#fff0f6,#ffd6e0)"></div>
-            <div class="color-swatch" data-color="c-green" style="background:linear-gradient(180deg,#eafff0,#bff5d1)"></div>
-            <div class="color-swatch" data-color="c-blue" style="background:linear-gradient(180deg,#ebf8ff,#c8f1ff)"></div>
-            <div class="color-swatch" data-color="c-grey" style="background:linear-gradient(180deg,#f7f7f8,#e9e9ec)"></div>
-          </div>
-          <button class="icon-btn" data-action="reminder" title="اضف تذكير">⏰</button>
-          <button class="icon-btn" data-action="resize" title="تغيير الحجم">↔️</button>
-        </div>
-      </div>
-    `;
+    </div>
+  `;
+  canvas.appendChild(n);
 
-    // render tags inside note
-    const tagsEl = el.querySelector('.tags');
-    (n.tags || []).forEach(t=>{
-      const pill = document.createElement('div');
-      pill.textContent = t;
-      pill.style.background = 'rgba(0,0,0,0.06)';
-      pill.style.padding = '4px 8px'; pill.style.borderRadius = '8px'; pill.style.fontSize='12px';
-      tagsEl.appendChild(pill);
-    });
-
-    // append to canvas
-    canvas.appendChild(el);
-
-    // attach interactions
-    attachNoteEvents(el, n);
-  });
-
-  renderTagsSidebar();
-}
-
-/* ========== events and interactions ========== */
-
-function attachNoteEvents(el, note){
-  const id = el.dataset.id;
-  const titleEl = el.querySelector('[data-edit="title"]');
-  const contentEl = el.querySelector('[data-edit="content"]');
-
-  // save edits
-  titleEl.addEventListener('input', () => {
-    const idx = state.notes.findIndex(x=>x.id===id);
-    if(idx>-1) { state.notes[idx].title = titleEl.textContent; saveState(); }
-  });
-  contentEl.addEventListener('input', () => {
-    const idx = state.notes.findIndex(x=>x.id===id);
-    if(idx>-1) { state.notes[idx].content = contentEl.innerText; saveState(); }
-  });
-
-  // delete
-  el.querySelector('[data-action="delete"]').addEventListener('click', ()=>{
-    if(!confirm('هل تريد حذف هذه النوت؟')) return;
-    state.notes = state.notes.filter(x=>x.id!==id);
-    saveState(); render();
-  });
-
-  // pin / lock
-  el.querySelector('[data-action="pin"]').addEventListener('click', ()=>{
-    const idx = state.notes.findIndex(x=>x.id===id);
-    if(idx>-1){ state.notes[idx].locked = !state.notes[idx].locked; saveState(); render(); }
-  });
-
-  // color picker
-  el.querySelectorAll('.color-swatch').forEach(s=>{
-    s.addEventListener('click', ()=>{
-      const cls = s.dataset.color;
-      const idx = state.notes.findIndex(x=>x.id===id);
-      if(idx>-1){ state.notes[idx].color = cls; saveState(); render(); }
-    });
-  });
-
-  // reminder
-  el.querySelector('[data-action="reminder"]').addEventListener('click', async ()=>{
-    const current = state.notes.find(x=>x.id===id);
-    const answer = prompt('ادخل وقت التذكير (YYYY-MM-DD HH:MM) — اتركه فارغ للحذف', current.reminderAt ? current.reminderAt.replace('T',' ').slice(0,16) : '');
-    if(answer === null) return;
-    if(answer.trim()===''){ current.reminderAt = null; saveState(); render(); return; }
-    // parse local datetime
-    const t = answer.replace(' ','T');
-    const when = new Date(t);
-    if(isNaN(when)) { alert('تنسيق غير صحيح'); return; }
-    current.reminderAt = when.toISOString();
-    saveState();
-    scheduleReminder(current);
-    render();
-  });
-
-  // resize button toggles contenteditable height adjust (simple)
-  el.querySelector('[data-action="resize"]').addEventListener('click', ()=>{
-    const idx = state.notes.findIndex(x=>x.id===id);
-    if(idx>-1){
-      state.notes[idx].w = (state.notes[idx].w || 240) + 40;
-      state.notes[idx].h = (state.notes[idx].h || 140) + 30;
-      saveState(); render();
-    }
-  });
-
-  // draggable (unless locked). handle pointer events for robust dragging
-  const handle = el.querySelector('.drag-handle');
-  let pointerId = null, startX=0, startY=0, startLeft=0, startTop=0;
-  handle.addEventListener('pointerdown', e=>{
-    e.preventDefault(); handle.setPointerCapture(e.pointerId);
-    if(state.notes.find(x=>x.id===id).locked) return;
-    pointerId = e.pointerId;
-    startX = e.clientX; startY = e.clientY;
-    startLeft = parseFloat(el.style.left || 0); startTop = parseFloat(el.style.top || 0);
-    document.body.classList.add('dragging');
-  });
-  handle.addEventListener('pointermove', e=>{
-    if(pointerId !== e.pointerId) return;
-    const dx = e.clientX - startX; const dy = e.clientY - startY;
-    el.style.left = (startLeft + dx) + 'px'; el.style.top = (startTop + dy) + 'px';
-  });
-  handle.addEventListener('pointerup', e=>{
-    if(pointerId !== e.pointerId) return;
-    try{ handle.releasePointerCapture(pointerId); }catch{}
-    pointerId = null; document.body.classList.remove('dragging');
-    // persist
-    const idx = state.notes.findIndex(x=>x.id===id);
-    if(idx>-1){
-      state.notes[idx].x = parseFloat(el.style.left || 0);
-      state.notes[idx].y = parseFloat(el.style.top || 0);
-      saveState();
-    }
-  });
-
-  // resizable by dragging lower-right corner (CSS resize not used for absolute)
-  el.style.resize = 'both';
-  el.style.overflow = 'auto';
-  // keep w/h when resized via user (listen to mouseup and update)
-  let resizeObserver = new ResizeObserver(entries=>{
-    for(const ent of entries){
-      const r = ent.contentRect;
-      const idx = state.notes.findIndex(x=>x.id===id);
-      if(idx>-1){ state.notes[idx].w = Math.round(r.width); state.notes[idx].h = Math.round(r.height); saveState(); }
-    }
-  });
-  resizeObserver.observe(el);
-}
-
-/* ========== Toolbar actions ========== */
-
-addNoteBtn.addEventListener('click', ()=>{
-  const n = createNoteObj();
-  state.notes.push(n);
-  saveState(); render();
-  // create a scheduled reminder if set later
-});
-
-exportBtn.addEventListener('click', ()=>{
-  const data = JSON.stringify(state, null, 2);
-  const blob = new Blob([data], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'thinkboard-export.json'; a.click();
-  URL.revokeObjectURL(url);
-});
-
-importBtn.addEventListener('click', ()=> importFile.click());
-importFile.addEventListener('change', async (e)=>{
-  const f = e.target.files[0]; if(!f) return;
-  const txt = await f.text();
-  try{
-    const parsed = JSON.parse(txt);
-    if(parsed && Array.isArray(parsed.notes)){
-      state = parsed; saveState(); render(); alert('تم الاستيراد!');
-    } else alert('الملف لا يحتوي على بيانات صالحة');
-  }catch(err){ alert('فشل قراءة الملف'); }
-  importFile.value = '';
-});
-
-clearBtn.addEventListener('click', ()=>{
-  if(!confirm('هل تريد حذف كل النوتات؟ هذا الإجراء لا يمكن التراجع عنه')) return;
-  state.notes = []; saveState(); render();
-});
-
-clearLocalBtn.addEventListener('click', ()=>{
-  if(!confirm('حذف التخزين المحلي سيحذف كل البيانات المحفوظة. استمر؟')) return;
-  localStorage.removeItem(STORAGE_KEY); state = {notes:[]}; render();
-});
-
-searchInput.addEventListener('input', ()=>{
-  render();
-});
-
-filterSelect.addEventListener('change', render);
-viewMode.addEventListener('change', ()=>{
-  // switching to free sets canvas absolute positioning; list/grid will adapt
-  const mode = viewMode.value;
-  const board = document.querySelector('.board');
-  if(mode === 'free'){
-    // clear special list styling
-    board.querySelector('.grid').classList.remove('list-view');
-    canvas.classList.remove('list-view');
-    canvas.style.position = 'relative';
-    // make sure the notes keep absolute positions - render handles
-  }
-  if(mode === 'list'){
-    // in list mode we show notes stacked - positions ignored
-  }
-  render();
-});
-
-/* ========== Tags management ========== */
-function renderTagsSidebar(){
-  const tags = new Set();
-  state.notes.forEach(n => (n.tags || []).forEach(t=>tags.add(t)));
-  tagsList.innerHTML = '';
-  if(tags.size === 0) tagsList.textContent = 'لا يوجد أوسمة بعد';
-  else {
-    tags.forEach(t=>{
-      const btn = document.createElement('button');
-      btn.className = 'btn'; btn.style.padding = '6px 8px'; btn.style.fontSize = '13px';
-      btn.textContent = t;
-      btn.addEventListener('click', ()=>{
-        searchInput.value = t; render();
-      });
-      tagsList.appendChild(btn);
-    });
-  }
-}
-newTagInput.addEventListener('keydown', (e)=>{
-  if(e.key==='Enter'){
-    const val = newTagInput.value.trim(); if(!val) return;
-    // add to selected note? we'll add to all selected? Simpler: add tag to most recent note
-    if(state.notes.length===0){ alert('لا توجد نوتات لإضافة وسم لها'); newTagInput.value=''; return; }
-    state.notes[state.notes.length-1].tags = state.notes[state.notes.length-1].tags || [];
-    if(!state.notes[state.notes.length-1].tags.includes(val)) state.notes[state.notes.length-1].tags.push(val);
-    newTagInput.value=''; saveState(); render();
-  }
-});
-
-/* ========== Persistence on load & reminders scheduling ========== */
-
-function scheduleAllReminders(){
-  // cancel existing timers by resetting map
-  if(window.__reminderTimers) {
-    Object.values(window.__reminderTimers).forEach(t=>clearTimeout(t));
-  }
-  window.__reminderTimers = {};
-  state.notes.forEach(n => {
-    if(n.reminderAt) scheduleReminder(n);
+  // Dragging
+  n.addEventListener('pointerdown', e=>{
+    if(e.target.closest('.color-picker') || e.target.closest('.icon-btn')) return;
+    let startX=e.clientX,startY=e.clientY;
+    let startLeft=parseFloat(n.style.left), startTop=parseFloat(n.style.top);
+    function move(ev){ n.style.left=startLeft+(ev.clientX-startX)+'px'; n.style.top=startTop+(ev.clientY-startY)+'px'; }
+    function up(){ document.removeEventListener('pointermove',move); document.removeEventListener('pointerup',up); }
+    document.addEventListener('pointermove',move);
+    document.addEventListener('pointerup',up);
   });
 }
 
-function scheduleReminder(n){
-  if(!n.reminderAt) return;
-  const when = new Date(n.reminderAt).getTime();
-  const now = Date.now();
-  const ms = when - now;
-  if(ms <= 0){
-    // past: fire immediately once
-    showNotification('تذكير: '+(n.title||'نوت'), n.content || '');
-    return;
-  }
-  const id = n.id;
-  if(window.__reminderTimers && window.__reminderTimers[id]) clearTimeout(window.__reminderTimers[id]);
-  window.__reminderTimers[id] = setTimeout(()=>{
-    showNotification('تذكير: '+(n.title||'نوت'), n.content || '');
-    delete window.__reminderTimers[id];
-  }, ms);
+/* Stopwatch */
+let stopwatchInterval, stopwatchTime=0;
+function startStopwatch(){
+  if(document.getElementById('stopwatch')) return;
+  const sw = document.createElement('div');
+  sw.id='stopwatch'; sw.className='note color2';
+  sw.style.left='50px'; sw.style.top='50px';
+  sw.innerHTML=`<div class="title">Stopwatch</div><div class="content" id="swContent">0:00</div>
+    <div class="note-footer"><button onclick="stopStopwatch()">⏹ Stop</button></div>`;
+  canvas.appendChild(sw);
+  stopwatchTime=0;
+  stopwatchInterval=setInterval(()=>{
+    const m=Math.floor(stopwatchTime/60), s=stopwatchTime%60;
+    document.getElementById('swContent').innerText=`${m}:${s<10?'0'+s:s}`; stopwatchTime++;
+  },1000);
 }
+function stopStopwatch(){ clearInterval(stopwatchInterval); document.getElementById('stopwatch').remove(); }
 
-// basic Notification helper
-function showNotification(title, body){
-  if('Notification' in window){
-    if(Notification.permission === 'granted'){
-      new Notification(title, { body, icon: null });
-    } else if(Notification.permission !== 'denied'){
-      Notification.requestPermission().then(p => { if(p==='granted') new Notification(title, {body}); });
-    } else {
-      // fallback: alert
-      alert(title + '\\n' + body);
-    }
-  } else {
-    alert(title + '\\n' + body);
-  }
-}
-
-/* small utility to escape HTML when injecting contenteditable default */
-function escapeHtml(str){
-  if(!str) return '';
-  return str.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
-}
-
-/* ========== Initialize ========== */
-loadState(); render(); scheduleAllReminders();
-
-/* UX: show hint on first visit */
-if(!localStorage.getItem('THINKBOARD_TOUR_SHOWN')){
-  setTimeout(()=> alert('مرحبًا! اضغط "نوت جديدة" لإضافة أول ملاحظة. اسحبها إلى أي مكان على الشاشة.'), 800);
-  localStorage.setItem('THINKBOARD_TOUR_SHOWN','1');
-}
-
-/* autosave every 5s as extra safety */
-setInterval(()=> saveState(), 5000);
-
-/* keyboard shortcuts */
-window.addEventListener('keydown', (e)=>{
-  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='n'){ e.preventDefault(); addNoteBtn.click(); }
-  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); exportBtn.click(); }
-});
+/* Labels placeholder */
+function openLabels(){ alert('واجهة Labels هنا'); }
 </script>
 
 </body>
