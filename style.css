@@ -1,0 +1,34 @@
+/* Smooth fade for page */
+body {
+    animation: fadeIn 0.6s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Notes pop animation */
+.note {
+    animation: popIn 0.35s cubic-bezier(.17,.89,.32,1.28);
+}
+@keyframes popIn {
+    0% { transform: scale(.6) translateY(15px); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Hover glow */
+.btn:hover, .icon-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+/* Add note floating */
+#addNoteBtn {
+    animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+
