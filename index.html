@@ -3,121 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ThinkBoard Mobile Ready</title>
+<title>MindfulSpace | نسخة محفوظة</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0f1724;
-  --card:#0b1220;
-  --muted:#9fb2c9;
-  --accent:#7dd3fc;
-  --accent-2:#60a5fa;
-  --glass: rgba(255,255,255,0.03);
-  --note-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  --bg:#0f0f20;
+  --board-bg:linear-gradient(180deg,#0a0a1a,#121232);
+  --note-shadow:0 8px 30px rgba(2,6,23,0.6);
+  --accent1:#ff6ec7;
+  --accent2:#6ec1ff;
   font-family:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
-
-/* Body & Animations */
 body{
-  margin:0; min-height:100vh; background: linear-gradient(180deg,#071029 0%, #071623 100%);
-  color:#e6eef8;
-  animation: fadeIn 0.6s ease;
-  transition: all 0.2s ease;
+  margin:0; min-height:100vh; background: var(--board-bg);
+  color:#e6eef8; overflow-x:hidden; font-size:16px;
 }
-@keyframes fadeIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-
-/* Navbar */
+.trial-banner{
+  width:100%; background:linear-gradient(90deg, #ff6ec7, #6ec1ff);
+  text-align:center; padding:6px 0; font-weight:700; color:#fff;
+  box-shadow:0 2px 10px rgba(0,0,0,0.3); position:fixed; top:0; z-index:9999;
+  font-size:14px;
+}
 .navbar{
-  height:64px; display:flex; align-items:center; justify-content:space-between;
+  margin-top:32px; height:64px; display:flex; align-items:center; justify-content:space-between;
   padding:0 16px; gap:12px;
-  backdrop-filter: blur(8px); background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+  backdrop-filter: blur(8px); background: rgba(255,255,255,0.02);
   border-bottom:1px solid rgba(255,255,255,0.02);
 }
 .brand{display:flex; align-items:center; gap:12px;}
-.logo{width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#05202b; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; box-shadow:0 6px 18px rgba(96,165,250,0.08);}
+.logo{width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,var(--accent1),var(--accent2)); color:#05202b; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; box-shadow:0 6px 18px rgba(110,193,255,0.2);}
 .title{font-weight:600; font-size:18px;}
-.meta{font-size:12px; color:var(--muted);}
+.meta{font-size:12px; color:#9fb2c9;}
 .search{padding:8px 12px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit; outline:none; min-width:180px;}
-
-/* Container */
 .container{display:grid; grid-template-columns:1fr; padding:16px; gap:12px; max-width:1400px; margin:0 auto;}
-.board{min-height:70vh; padding:12px; border-radius:12px; position:relative; background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);}
-
-/* Notes */
+.board{min-height:70vh; padding:12px; border-radius:12px; position:relative; background:var(--board-bg); transition:all 0.3s ease; overflow:hidden;}
 .note{
   position:absolute; width:200px; min-height:120px; padding:12px; border-radius:12px;
   box-shadow: var(--note-shadow); color:#08222a;
   display:flex; flex-direction:column; gap:8px;
-  animation: popIn 0.35s cubic-bezier(.17,.89,.32,1.28);
-  transform-origin: top left;
-  user-select:text; overflow:hidden;
+  transform-origin: top left; user-select:text; overflow:hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: floating 4s ease-in-out infinite alternate;
 }
-@keyframes popIn{ 0%{transform:scale(.6) translateY(15px); opacity:0;} 100%{transform:scale(1); opacity:1;} }
+.note:hover{
+  transform: scale(1.08);
+  box-shadow:0 12px 36px rgba(110,193,255,0.7);
+  filter: drop-shadow(0 0 8px #6ec1ff);
+}
+@keyframes floating{
+  0%{transform: translate(0,0);}
+  25%{transform: translate(5px,-5px);}
+  50%{transform: translate(-5px,5px);}
+  75%{transform: translate(5px,5px);}
+  100%{transform: translate(0,-5px);}
+}
 .note .title{font-weight:700;}
-.note .content{flex:1; font-size:14px; overflow:auto; white-space:pre-wrap;}
+.note .content{flex:1; font-size:14px; overflow:auto; white-space:pre-wrap; max-height:150px;}
 .note .note-footer{display:flex; justify-content:space-between; gap:6px; align-items:center; margin-top:6px;}
 .note .icon-btn{background:transparent; border:none; padding:6px; border-radius:8px; cursor:pointer;}
-
-/* Color Picker - New vibrant colors */
 .color-picker{display:flex; gap:4px;}
-.color-swatch{
-  width:22px; height:22px; border-radius:6px; cursor:pointer; border:1px solid rgba(0,0,0,0.06);
-  transition:all 0.2s ease;
-}
-.color-swatch:hover{transform:scale(1.2);}
-.color1{background:linear-gradient(135deg,#FFEDD5,#FED7AA);}
-.color2{background:linear-gradient(135deg,#E0F2FE,#BAE6FD);}
-.color3{background:linear-gradient(135deg,#DCFCE7,#BBF7D0);}
-.color4{background:linear-gradient(135deg,#FDE2FF,#FBCFE8);}
-.color5{background:linear-gradient(135deg,#FFF9C2,#FEF08A);}
-
-/* Floating + button */
+.color-swatch{width:22px; height:22px; border-radius:6px; cursor:pointer; border:1px solid rgba(0,0,0,0.06); transition:all 0.2s ease;}
+.color-swatch:hover{transform:scale(1.3);}
+.color1{background:linear-gradient(135deg,#FF6EC7,#FFC1F0);}
+.color2{background:linear-gradient(135deg,#6EC1FF,#A0E1FF);}
+.color3{background:linear-gradient(135deg,#6EFFA1,#B0FFCC);}
+.color4{background:linear-gradient(135deg,#FFF36E,#FFFAC2);}
+.color5{background:linear-gradient(135deg,#FF926E,#FFC2A0);}
 .fab-container{position:fixed; bottom:24px; right:24px; z-index:999;}
-#fabBtn{
-  width:56px; height:56px; border-radius:50%; border:none; background:linear-gradient(135deg,#7dd3fc,#60a5fa); color:#05202b; font-size:28px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px rgba(96,165,250,0.3);
-  transition:all 0.2s ease;
-}
-#fabBtn:hover{transform:scale(1.1); box-shadow:0 12px 36px rgba(96,165,250,0.4);}
+#fabBtn{width:56px; height:56px; border-radius:50%; border:none; background:linear-gradient(135deg,#ff6ec7,#6ec1ff); color:#05202b; font-size:28px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px rgba(110,193,255,0.3); transition:all 0.2s ease; animation: fabFloat 3s ease-in-out infinite alternate;}
+#fabBtn:hover{transform:scale(1.2); box-shadow:0 12px 36px rgba(110,193,255,0.7);}
+@keyframes fabFloat{0%{transform: translateY(0);}50%{transform: translateY(-8px);}100%{transform: translateY(0);}}
 .fab-menu{display:none; flex-direction:column; margin-bottom:10px; gap:8px; align-items:flex-end;}
-.fab-item{
-  padding:10px 16px; border-radius:12px; border:none; background:rgba(15,23,36,0.9); color:#e6eef8; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.3); transition: all 0.2s ease;
-}
-.fab-item:hover{background:rgba(96,165,250,0.2); transform:translateX(-4px);}
-
-/* Mobile responsiveness */
-@media(max-width:980px){ .search{width:100%;} }
-@media(max-width:600px){
-  .board{padding:8px;}
-  #fabBtn{width:50px;height:50px;font-size:24px;}
-  .fab-item{font-size:14px;}
-  .note{width:160px;}
-}
+.fab-item{padding:10px 16px; border-radius:12px; border:none; background:rgba(15,23,36,0.9); color:#e6eef8; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.3); transition: all 0.2s ease;}
+.fab-item:hover{background:rgba(110,193,255,0.2); transform:translateX(-4px);}
+.todo-list{display:flex; flex-direction:column; gap:6px;}
+.todo-item{display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:6px 8px; border-radius:6px; cursor:pointer;}
+.todo-item.completed{text-decoration:line-through; opacity:0.6;}
+@media(max-width:980px){ .search{width:100%;} .navbar{height:auto; flex-direction:column; align-items:flex-start; padding:8px;} }
+@media(max-width:600px){ .board{padding:8px;} #fabBtn{width:50px;height:50px;font-size:24px;} .fab-item{font-size:14px;} .note{width:160px; min-height:100px;} .note .content{max-height:120px; font-size:13px;} .trial-banner{font-size:12px;} }
 </style>
 </head>
 <body>
 
-<!-- Navbar -->
+<div class="trial-banner">⚠️ هذه النسخة التجريبية | بعض الميزات قد تكون محدودة ⚠️</div>
+
 <div class="navbar">
   <div class="brand">
-    <div class="logo">T</div>
+    <div class="logo">M</div>
     <div>
-      <div class="title">ThinkBoard</div>
+      <div class="title">MindfulSpace</div>
       <div class="meta">لوحة الأفكار والملاحظات</div>
     </div>
   </div>
   <input type="text" class="search" placeholder="ابحث داخل النوتات..."/>
 </div>
 
-<!-- Main container -->
 <div class="container">
   <main class="board" id="canvas"></main>
 </div>
 
-<!-- Floating + button -->
 <div class="fab-container">
   <button id="fabBtn">+</button>
   <div class="fab-menu" id="fabMenu">
-    <button class="fab-item" onclick="addNote()">📝 Notes</button>
+    <button class="fab-item" onclick="addNote()">📝 نوتة جديدة</button>
+    <button class="fab-item" onclick="addTodo()">✅ To-Do List</button>
     <button class="fab-item" onclick="startStopwatch()">⏱ Stopwatch</button>
     <button class="fab-item" onclick="openLabels()">🏷 Labels</button>
   </div>
@@ -130,44 +119,98 @@ const fabMenu = document.getElementById('fabMenu');
 fabBtn.addEventListener('click', ()=>{ fabMenu.style.display = fabMenu.style.display==='flex'?'none':'flex'; });
 document.addEventListener('click', e=>{ if(!fabBtn.contains(e.target) && !fabMenu.contains(e.target)) fabMenu.style.display='none'; });
 
-/* Random colors */
 const colors = ['color1','color2','color3','color4','color5'];
 
-function addNote(){
+/* Load saved data */
+let notesData = JSON.parse(localStorage.getItem('notesData')||'[]');
+let stopwatchData = JSON.parse(localStorage.getItem('stopwatchData')||'null');
+
+function saveNotes(){
+  const data = [];
+  document.querySelectorAll('.note').forEach(n=>{
+    const title=n.querySelector('.title').innerText;
+    const content=n.querySelector('.content').innerText;
+    const color = n.className.split(' ')[1]||'color1';
+    const left=n.style.left; const top=n.style.top;
+    data.push({title,content,color,left,top});
+  });
+  localStorage.setItem('notesData', JSON.stringify(data));
+}
+
+function addNoteFromData(d){
   const n = document.createElement('div');
-  n.className='note '+colors[Math.floor(Math.random()*colors.length)];
-  n.style.left=(40+Math.random()*200)+'px';
-  n.style.top=(40+Math.random()*120)+'px';
-  n.innerHTML=`
-    <div class="title" contenteditable="true">نوت جديدة</div>
-    <div class="content" contenteditable="true"></div>
+  n.className='note '+d.color;
+  n.style.left=d.left; n.style.top=d.top;
+  n.innerHTML=`<div class="title" contenteditable="true">${d.title}</div>
+    <div class="content" contenteditable="true">${d.content}</div>
     <div class="note-footer">
-      <button class="icon-btn" onclick="this.parentElement.parentElement.remove()">🗑️</button>
+      <button class="icon-btn" onclick="this.parentElement.parentElement.remove(); saveNotes();">🗑️</button>
       <div class="color-picker">
-        <div class="color-swatch color1" onclick="this.closest('.note').className='note color1'"></div>
-        <div class="color-swatch color2" onclick="this.closest('.note').className='note color2'"></div>
-        <div class="color-swatch color3" onclick="this.closest('.note').className='note color3'"></div>
-        <div class="color-swatch color4" onclick="this.closest('.note').className='note color4'"></div>
-        <div class="color-swatch color5" onclick="this.closest('.note').className='note color5'"></div>
+        <div class="color-swatch color1" onclick="this.closest('.note').className='note color1'; saveNotes();"></div>
+        <div class="color-swatch color2" onclick="this.closest('.note').className='note color2'; saveNotes();"></div>
+        <div class="color-swatch color3" onclick="this.closest('.note').className='note color3'; saveNotes();"></div>
+        <div class="color-swatch color4" onclick="this.closest('.note').className='note color4'; saveNotes();"></div>
+        <div class="color-swatch color5" onclick="this.closest('.note').className='note color5'; saveNotes();"></div>
       </div>
-    </div>
-  `;
+    </div>`;
   canvas.appendChild(n);
 
-  // Dragging
   n.addEventListener('pointerdown', e=>{
     if(e.target.closest('.color-picker') || e.target.closest('.icon-btn')) return;
     let startX=e.clientX,startY=e.clientY;
     let startLeft=parseFloat(n.style.left), startTop=parseFloat(n.style.top);
-    function move(ev){ n.style.left=startLeft+(ev.clientX-startX)+'px'; n.style.top=startTop+(ev.clientY-startY)+'px'; }
+    function move(ev){ n.style.left=startLeft+(ev.clientX-startX)+'px'; n.style.top=startTop+(ev.clientY-startY)+'px'; saveNotes(); }
     function up(){ document.removeEventListener('pointermove',move); document.removeEventListener('pointerup',up); }
     document.addEventListener('pointermove',move);
     document.addEventListener('pointerup',up);
   });
+
+  // Save on content edit
+  n.querySelectorAll('[contenteditable]').forEach(el=>el.addEventListener('input', saveNotes));
+}
+
+/* Load saved notes */
+notesData.forEach(d=>addNoteFromData(d));
+
+/* Add new note */
+function addNote(){
+  const n = {title:'نوت جديدة', content:'', color:colors[Math.floor(Math.random()*colors.length)],
+             left:(40+Math.random()*200)+'px', top:(40+Math.random()*120)+'px'};
+  addNoteFromData(n);
+  saveNotes();
+}
+
+/* To-Do List */
+function addTodo(){
+  const t = document.createElement('div');
+  t.className='note color3';
+  t.style.left='60px'; t.style.top='60px';
+  t.innerHTML=`<div class="title">To-Do List</div><div class="content"><div class="todo-list"></div></div>
+    <div class="note-footer">
+      <button class="icon-btn" onclick="this.parentElement.parentElement.remove(); saveNotes();">🗑️</button>
+      <button class="icon-btn" onclick="newTodo(this)">➕</button>
+    </div>`;
+  canvas.appendChild(t);
+  saveNotes();
+}
+function newTodo(btn){
+  const list = btn.closest('.note').querySelector('.todo-list');
+  const val = prompt('ادخل مهمة جديدة:');
+  if(val){ 
+    const item = document.createElement('div'); 
+    item.className='todo-item'; 
+    item.innerText=val; 
+    item.addEventListener('click', ()=>{
+      item.classList.toggle('completed');
+      saveNotes();
+    });
+    list.appendChild(item);
+    saveNotes();
+  }
 }
 
 /* Stopwatch */
-let stopwatchInterval, stopwatchTime=0;
+let stopwatchInterval=0, stopwatchTime=0;
 function startStopwatch(){
   if(document.getElementById('stopwatch')) return;
   const sw = document.createElement('div');
@@ -176,17 +219,19 @@ function startStopwatch(){
   sw.innerHTML=`<div class="title">Stopwatch</div><div class="content" id="swContent">0:00</div>
     <div class="note-footer"><button onclick="stopStopwatch()">⏹ Stop</button></div>`;
   canvas.appendChild(sw);
-  stopwatchTime=0;
+
+  stopwatchTime = stopwatchData?.time||0;
   stopwatchInterval=setInterval(()=>{
     const m=Math.floor(stopwatchTime/60), s=stopwatchTime%60;
-    document.getElementById('swContent').innerText=`${m}:${s<10?'0'+s:s}`; stopwatchTime++;
+    document.getElementById('swContent').innerText=`${m}:${s<10?'0'+s:s}`;
+    stopwatchTime++;
+    localStorage.setItem('stopwatchData', JSON.stringify({time:stopwatchTime}));
   },1000);
 }
-function stopStopwatch(){ clearInterval(stopwatchInterval); document.getElementById('stopwatch').remove(); }
+function stopStopwatch(){ clearInterval(stopwatchInterval); document.getElementById('stopwatch')?.remove(); localStorage.removeItem('stopwatchData'); }
+if(stopwatchData) startStopwatch();
 
-/* Labels placeholder */
 function openLabels(){ alert('واجهة Labels هنا'); }
 </script>
-
 </body>
 </html>
