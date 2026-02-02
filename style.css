@@ -1,93 +1,11 @@
-/* Smooth fade for page */
-body {
-    animation: fadeIn 0.6s ease;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Notes pop animation */
-.note {
-    animation: popIn 0.35s cubic-bezier(.17,.89,.32,1.28);
-}
-@keyframes popIn {
-    0% { transform: scale(.6) translateY(15px); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+/* تحسينات الموبايل */
+@media(max-width:600px){
+  #fabBtn{width:60px;height:60px;font-size:28px;}
+  .fab-item{font-size:15px;padding:12px 18px;}
+  .note{width:180px; min-height:120px;}
+  .note .content{max-height:130px;font-size:14px;}
 }
 
-/* Hover glow */
-.btn:hover, .icon-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-}
-
-/* Add note floating */
-#addNoteBtn {
-    animation: float 3s ease-in-out infinite;
-}
-@keyframes float {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-}
-
-/* Smooth fade for page */
-body {
-    animation: fadeIn 0.6s ease;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Notes pop animation */
-.note {
-    animation: popIn 0.35s cubic-bezier(.17,.89,.32,1.28);
-}
-@keyframes popIn {
-    0% { transform: scale(.6) translateY(15px); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-/* Hover glow */
-.btn:hover, .icon-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-}
-
-/* Add note floating */
-#addNoteBtn {
-    animation: float 3s ease-in-out infinite;
-}
-@keyframes float {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-}
-
-/* Optional: smooth transitions for colors, sizes */
-* {
-    transition: all 0.2s ease;
-}
-
-
-/* ======= Responsive adjustments ======= */
-@media (max-width: 1200px) {
-  .container { grid-template-columns: 220px 1fr; padding: 16px; }
-  .sidebar { padding: 16px; }
-}
-
-@media (max-width: 980px) {
-  .container { grid-template-columns: 1fr; padding: 12px; }
-  .sidebar { order: 2; width: 100%; margin-bottom: 12px; }
-  .board { order: 1; }
-}
-
-@media (max-width: 600px) {
-  .navbar { flex-direction: column; align-items: flex-start; gap: 8px; height: auto; padding: 10px; }
-  .nav-actions { flex-wrap: wrap; gap: 6px; }
-  .search { width: 100%; min-width: unset; }
-  .sidebar { padding: 12px; border-radius: 12px; }
-  .sidebar-btn { font-size: 14px; padding: 6px 10px; }
-  .note { width: 90%; min-width: unset; max-width: unset; }
-}
-
+/* تحسين السحب على الموبايل */
+.note:active{cursor:grabbing;}
+.board{touch-action: pan-x pan-y;}
