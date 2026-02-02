@@ -2,332 +2,578 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MindfulSpace | نسخة محفوظة</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MindfulSpace Pro | Ultimate Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-:root{
-  --bg-dark:#0f0f20;
-  --board-bg-dark:linear-gradient(180deg,#0a0a1a,#121232);
-  --bg-light:#f8f8f8;
-  --board-bg-light:linear-gradient(180deg,#ffffff,#e0e0e0);
-  --bg-green:#eafaf1;
-  --board-bg-green:linear-gradient(180deg,#eafaf1,#d0f5dd);
-  --note-shadow:0 8px 30px rgba(2,6,23,0.6);
-  --accent1:#ff6ec7;
-  --accent2:#6ec1ff;
-  --text-light:#e6eef8;
-  --text-dark:#111;
-  font-family:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-}
-body{
-  margin:0; min-height:100vh; font-size:16px;
-  transition:all 0.3s ease;
+:root {
+  --bg-deep: #050510;
+  --accent-primary: #00f2ff;
+  --accent-secondary: #ff0055;
+  --glass-bg: rgba(20, 20, 35, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --text-main: #ffffff;
+  --text-muted: #a0a0b0;
+  --shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  --neon-glow: 0 0 20px rgba(0, 242, 255, 0.15);
 }
 
-.brand .logo {
-  width: 60px;               /* حجم اللوجو */
-  height: 60px;
-  border-radius: 50%;        /* شكل دائري */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+* { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+body {
+  margin: 0; padding: 0;
+  background-color: var(--bg-deep);
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(255, 0, 85, 0.1) 0%, transparent 50%);
+  font-family: 'Tajawal', sans-serif;
+  overflow: hidden; /* Hide scrollbars, custom canvas handles it */
+  color: var(--text-main);
+  height: 100vh;
+  width: 100vw;
+  user-select: none;
+}
+
+/* --- UI Controls --- */
+.ui-layer {
+  position: fixed; z-index: 1000;
+  pointer-events: none; /* Let clicks pass through empty areas */
+  width: 100%; height: 100%; top: 0; left: 0;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 20px;
+}
+
+.navbar {
+  pointer-events: auto;
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(10, 10, 20, 0.8);
+  backdrop-filter: blur(15px);
+  padding: 10px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  align-self: center;
+  max-width: 900px;
+  width: 100%;
+  animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand i { font-size: 1.5rem; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.brand span { font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; }
+
+.tools { display: flex; gap: 10px; }
+.tool-btn {
+  background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+  color: var(--text-main); width: 40px; height: 40px; border-radius: 10px;
+  cursor: pointer; transition: all 0.2s ease; display: grid; place-items: center;
+  font-size: 1rem;
+}
+.tool-btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); color: var(--accent-primary); }
+
+/* --- FAB Menu --- */
+.fab-wrapper {
+  pointer-events: auto;
+  position: absolute; bottom: 30px; left: 30px;
+  display: flex; flex-direction: column-reverse; gap: 12px; align-items: flex-start;
+}
+
+.fab-main {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-primary), #00c3ff);
+  border: none; color: #000; font-size: 1.5rem;
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+  cursor: pointer; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: grid; place-items: center;
+}
+.fab-main:hover { transform: scale(1.1) rotate(90deg); }
+.fab-main.active { transform: rotate(45deg); background: var(--accent-secondary); box-shadow: 0 0 20px rgba(255, 0, 85, 0.4); }
+
+.fab-options {
+  display: flex; flex-direction: column; gap: 10px;
+  opacity: 0; transform: translateY(20px) scale(0.8);
+  pointer-events: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fab-wrapper.open .fab-options { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+
+.fab-item {
+  background: var(--glass-bg); backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border); color: #fff;
+  padding: 10px 20px; border-radius: 30px;
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  font-size: 0.9rem; white-space: nowrap;
+}
+.fab-item i { color: var(--accent-primary); }
+.fab-item:hover { background: rgba(255,255,255,0.1); transform: translateX(-5px); }
+
+/* --- Infinite Canvas --- */
+#viewport {
+  width: 100vw; height: 100vh; overflow: hidden; cursor: grab;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 50px 50px; /* Grid Size */
+}
+#viewport:active { cursor: grabbing; }
+
+#world {
+  position: absolute; top: 0; left: 0;
+  transform-origin: 0 0;
+  width: 0; height: 0; /* Expansion point */
+  will-change: transform;
+}
+
+/* --- Items (Notes & Widgets) --- */
+.item {
+  position: absolute;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 0; /* Padding managed inside */
+  box-shadow: var(--shadow-card);
+  min-width: 240px;
+  max-width: 350px;
+  display: flex; flex-direction: column;
+  transition: box-shadow 0.2s, border-color 0.2s;
   overflow: hidden;
-  background: linear-gradient(135deg, #6ec1ff, #ff6ec7); /* تأثير Gradient */
-  box-shadow: 0 0 15px rgba(110,193,255,0.6), 0 0 30px rgba(255,110,199,0.4);
-  animation: neonPulse 2s infinite alternate; /* أنيميشن Neon */
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  user-select: text; /* Allow text selection inside */
 }
 
-.brand .logo img {
-  width: 70%;                /* حجم الصورة داخل الدائرة */
-  height: auto;
-  display: block;
-  object-fit: contain;
+.item:hover,.item.active {
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  z-index: 999; /* Bring to front */
 }
 
-@keyframes neonPulse {
-  0% { box-shadow: 0 0 10px rgba(110,193,255,0.4), 0 0 20px rgba(255,110,199,0.3); transform: scale(1); }
-  50% { box-shadow: 0 0 20px rgba(110,193,255,0.6), 0 0 40px rgba(255,110,199,0.5); transform: scale(1.05); }
-  100% { box-shadow: 0 0 15px rgba(110,193,255,0.5), 0 0 30px rgba(255,110,199,0.4); transform: scale(1); }
+.item-header {
+  padding: 12px 15px;
+  background: rgba(0,0,0,0.2);
+  cursor: grab; /* Drag handle */
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 0.9rem; color: var(--text-muted); font-weight: 600;
+}
+.item-header:active { cursor: grabbing; }
+.item-actions { opacity: 0; transition: opacity 0.2s; display: flex; gap: 8px; }
+.item:hover .item-actions { opacity: 1; }
+.action-icon { cursor: pointer; padding: 4px; border-radius: 4px; transition: 0.2s; }
+.action-icon:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+.item-body {
+  padding: 15px;
+  flex: 1; min-height: 100px;
+  font-size: 1rem; line-height: 1.6; color: var(--text-main);
+}
+.item-body[contenteditable]:empty:before {
+  content: 'اكتب شيئاً رائعاً...';
+  color: rgba(255,255,255,0.3);
 }
 
-/* Responsive */
-@media(max-width:600px){
-  .brand .logo {
-    width: 50px;
-    height: 50px;
-  }
-  .brand .logo img {
-    width: 75%;
-  }
+/* --- Specific Widget Styles --- */
+.todo-item {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  padding: 8px; background: rgba(255,255,255,0.03); border-radius: 8px;
+  transition: 0.2s;
+}
+.todo-item:hover { background: rgba(255,255,255,0.06); }
+.todo-item.completed span { text-decoration: line-through; opacity: 0.5; }
+.todo-check {
+  appearance: none; width: 18px; height: 18px; border: 2px solid var(--accent-primary);
+  border-radius: 4px; cursor: pointer; position: relative;
+}
+.todo-check:checked { background: var(--accent-primary); }
+.todo-check:checked::after {
+  content: '✔'; position: absolute; top: -3px; left: 2px; font-size: 12px; color: #000;
 }
 
+.timer-display { font-size: 2.5rem; font-family: monospace; text-align: center; margin: 10px 0; color: var(--accent-primary); text-shadow: 0 0 10px var(--accent-primary); }
+.timer-controls { display: flex; justify-content: center; gap: 10px; }
+.btn-sm { padding: 5px 15px; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; }
+.btn-sm:hover { background: var(--accent-primary); color: #000; }
 
-/* Trial Banner */
-.trial-banner{
-  position:fixed; top:20px; left:50%; transform:translateX(-50%);
-  background: linear-gradient(135deg,#ff6ec7,#6ec1ff);
-  color:#fff; font-weight:700; padding:8px 20px; border-radius:24px;
-  box-shadow:0 6px 20px rgba(110,193,255,0.4);
-  z-index:9999; cursor:pointer; animation: pulse 2s infinite;
-  font-size:14px; text-align:center;
+/* --- Animations --- */
+@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Helper for resize handle */
+.resize-handle {
+  width: 15px; height: 15px; position: absolute; bottom: 0; left: 0;
+  cursor: nwse-resize; opacity: 0.3; transition: 0.2s;
 }
-@keyframes pulse{
-  0%{transform:translateX(-50%) scale(1);}
-  50%{transform:translateX(-50%) scale(1.1);}
-  100%{transform:translateX(-50%) scale(1);}
-}
+.resize-handle:hover { opacity: 1; background: var(--accent-primary); }
 
-/* Welcome Message */
-.welcome-msg{
-  position:fixed; top:10%; left:50%; transform:translateX(-50%);
-  background:rgba(255,255,255,0.9); padding:14px 24px; border-radius:12px; font-weight:600;
-  box-shadow:0 6px 20px rgba(0,0,0,0.3); display:none; z-index:9999; color:#111;
-}
-
-/* Navbar */
-.navbar{
-  height:64px; display:flex; align-items:center; justify-content:space-between;
-  padding:0 16px; gap:12px;
-  backdrop-filter: blur(8px); background: rgba(255,255,255,0.02);
-  border-bottom:1px solid rgba(255,255,255,0.02);
-  transition: all 0.3s ease;
-}
-.brand{display:flex; align-items:center; gap:12px;}
-.logo{width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,var(--accent1),var(--accent2)); color:#05202b; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; box-shadow:0 6px 18px rgba(110,193,255,0.2);}
-.title{font-weight:600; font-size:18px;}
-.meta{font-size:12px; color:#9fb2c9;}
-.search{padding:8px 12px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit; outline:none; min-width:180px;}
-.theme-btn{padding:6px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:600; transition:all 0.2s ease;}
-
-/* Container */
-.container{display:grid; grid-template-columns:1fr; padding:16px; gap:12px; max-width:1400px; margin:0 auto;}
-.board{min-height:70vh; padding:12px; border-radius:12px; position:relative; transition:all 0.3s ease; overflow:hidden;}
-
-/* Notes */
-.note{
-  position:absolute; width:200px; min-height:120px; padding:12px; border-radius:12px;
-  box-shadow: var(--note-shadow); color:#08222a;
-  display:flex; flex-direction:column; gap:8px;
-  transform-origin: top left; user-select:text; overflow:hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  animation: floating 4s ease-in-out infinite alternate;
-}
-.note:hover{transform: scale(1.08); box-shadow:0 12px 36px rgba(110,193,255,0.7); filter: drop-shadow(0 0 8px #6ec1ff);}
-@keyframes floating{
-  0%{transform: translate(0,0);} 25%{transform: translate(5px,-5px);} 50%{transform: translate(-5px,5px);}
-  75%{transform: translate(5px,5px);} 100%{transform: translate(0,-5px);}
-}
-.note .title{font-weight:700;}
-.note .content{flex:1; font-size:14px; overflow:auto; white-space:pre-wrap; max-height:150px;}
-.note .note-footer{display:flex; justify-content:space-between; gap:6px; align-items:center; margin-top:6px;}
-.note .icon-btn{background:transparent; border:none; padding:6px; border-radius:8px; cursor:pointer;}
-.color-picker{display:flex; gap:4px;}
-.color-swatch{width:22px; height:22px; border-radius:6px; cursor:pointer; border:1px solid rgba(0,0,0,0.06); transition:all 0.2s ease;}
-.color-swatch:hover{transform:scale(1.3);}
-.color1{background:linear-gradient(135deg,#FF6EC7,#FFC1F0);}
-.color2{background:linear-gradient(135deg,#6EC1FF,#A0E1FF);}
-.color3{background:linear-gradient(135deg,#6EFFA1,#B0FFCC);}
-.color4{background:linear-gradient(135deg,#FFF36E,#FFFAC2);}
-.color5{background:linear-gradient(135deg,#FF926E,#FFC2A0);}
-
-/* FAB */
-.fab-container{position:fixed; bottom:24px; right:24px; z-index:999;}
-#fabBtn{width:56px; height:56px; border-radius:50%; border:none; background:linear-gradient(135deg,#ff6ec7,#6ec1ff); color:#05202b; font-size:28px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px rgba(110,193,255,0.3); transition:all 0.2s ease; animation: fabFloat 3s ease-in-out infinite alternate;}
-#fabBtn:hover{transform:scale(1.2); box-shadow:0 12px 36px rgba(110,193,255,0.7);}
-@keyframes fabFloat{0%{transform: translateY(0);}50%{transform: translateY(-8px);}100%{transform: translateY(0);}}
-.fab-menu{display:none; flex-direction:column; margin-bottom:10px; gap:8px; align-items:flex-end;}
-.fab-item{padding:10px 16px; border-radius:12px; border:none; background:rgba(15,23,36,0.9); color:#e6eef8; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.3); transition: all 0.2s ease;}
-.fab-item:hover{background:rgba(110,193,255,0.2); transform:translateX(-4px);}
-
-/* To-Do */
-.todo-list{display:flex; flex-direction:column; gap:6px;}
-.todo-item{display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:6px 8px; border-radius:6px; cursor:pointer;}
-.todo-item.completed{text-decoration:line-through; opacity:0.6;}
-
-/* Responsive */
-@media(max-width:980px){ .search{width:100%;} .navbar{height:auto; flex-direction:column; align-items:flex-start; padding:8px;} }
-@media(max-width:600px){ .board{padding:8px;} #fabBtn{width:50px;height:50px;font-size:24px;} .fab-item{font-size:14px;} .note{width:160px; min-height:100px;} .note .content{max-height:120px; font-size:13px;} .trial-banner{font-size:12px;} .welcome-msg{font-size:12px;} }
 </style>
 </head>
 <body>
 
-<div class="trial-banner" id="trialBanner" title="نسخة تجريبية">نسخة تجريبية 🔔</div>
-<div class="welcome-msg" id="welcomeMsg">أهلاً بك في MindfulSpace! 🎉</div>
-
-<div class="navbar">
-  <div class="brand">
-    <div class="logo"><img src="mindflow-logo.svg"></div>
-    <div>
-      <div class="title">MindfulSpace</div>
-      <div class="meta">لوحة الأفكار والملاحظات</div>
+<div class="ui-layer">
+  <div class="navbar">
+    <div class="brand">
+      <i class="fa-solid fa-brain"></i>
+      <span>MindfulSpace Pro</span>
+    </div>
+    <div class="tools">
+      <div class="tool-btn" onclick="resetView()" title="إعادة ضبط العرض"><i class="fa-solid fa-compress"></i></div>
+      <div class="tool-btn" onclick="exportData()" title="تصدير البيانات"><i class="fa-solid fa-download"></i></div>
+      <div class="tool-btn" onclick="clearCanvas()" title="مسح الكل" style="color:var(--accent-secondary)"><i class="fa-solid fa-trash"></i></div>
     </div>
   </div>
-  <input type="text" class="search" placeholder="ابحث داخل النوتات..."/>
-  <button class="theme-btn" id="themeBtn">🌓 تغيير الثيم</button>
+
+  <div class="fab-wrapper" id="fabWrapper">
+    <button class="fab-main" id="fabBtn"><i class="fa-solid fa-plus"></i></button>
+    <div class="fab-options">
+      <div class="fab-item" onclick="createItem('note')"><i class="fa-regular fa-note-sticky"></i> ملاحظة جديدة</div>
+      <div class="fab-item" onclick="createItem('todo')"><i class="fa-solid fa-list-check"></i> قائمة مهام</div>
+      <div class="fab-item" onclick="createItem('pomodoro')"><i class="fa-solid fa-clock"></i> بومودورو</div>
+      <div class="fab-item" onclick="createItem('stopwatch')"><i class="fa-solid fa-stopwatch"></i> ساعة إيقاف</div>
+    </div>
+  </div>
 </div>
 
-<div class="container">
-  <main class="board" id="canvas"></main>
-</div>
-
-<div class="fab-container">
-  <button id="fabBtn">+</button>
-  <div class="fab-menu" id="fabMenu">
-    <button class="fab-item" onclick="addNote()">📝 نوتة جديدة</button>
-    <button class="fab-item" onclick="addTodo()">✅ To-Do List</button>
-    <button class="fab-item" onclick="startStopwatch()">⏱ Stopwatch</button>
-    <button class="fab-item" onclick="openLabels()">🏷 Labels</button>
+<div id="viewport">
+  <div id="world">
+    <!-- Items injected via JS -->
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById('canvas');
+// --- State Management ---
+const state = {
+  items: JSON.parse(localStorage.getItem('mindful_items') || '[]'),
+  view: JSON.parse(localStorage.getItem('mindful_view') || '{"x":0,"y":0,"scale":1}'),
+  nextId: Date.now()
+};
+
+// --- DOM Elements ---
+const world = document.getElementById('world');
+const viewport = document.getElementById('viewport');
 const fabBtn = document.getElementById('fabBtn');
-const fabMenu = document.getElementById('fabMenu');
-const trialBanner = document.getElementById('trialBanner');
-const welcomeMsg = document.getElementById('welcomeMsg');
-const themeBtn = document.getElementById('themeBtn');
-let currentTheme = localStorage.getItem('theme') || 'dark';
+const fabWrapper = document.getElementById('fabWrapper');
 
-function applyTheme(theme){
-  if(theme==='dark'){document.body.style.background='var(--board-bg-dark)'; document.body.style.color='var(--text-light)';}
-  if(theme==='light'){document.body.style.background='var(--board-bg-light)'; document.body.style.color='var(--text-dark)';}
-  if(theme==='green'){document.body.style.background='var(--board-bg-green)'; document.body.style.color='var(--text-dark)';}
-  localStorage.setItem('theme', theme);
+// --- Init ---
+function init() {
+  applyView();
+  state.items.forEach(renderItem);
+  
+  // Start timers if any exist
+  setInterval(updateTimers, 1000);
+  
+  // Auto-save interval
+  setInterval(saveState, 2000);
 }
-applyTheme(currentTheme);
 
-themeBtn.addEventListener('click', ()=>{
-  if(currentTheme==='dark'){currentTheme='light';}else if(currentTheme==='light'){currentTheme='green';}else{currentTheme='dark';}
-  applyTheme(currentTheme);
+// --- Canvas Logic (Pan & Zoom) ---
+let isPanning = false;
+let startX, startY, initialViewX, initialViewY;
+
+viewport.addEventListener('mousedown', (e) => {
+  if(e.target === viewport || e.target === world) {
+    isPanning = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    initialViewX = state.view.x;
+    initialViewY = state.view.y;
+    viewport.style.cursor = 'grabbing';
+  }
 });
 
-fabBtn.addEventListener('click', ()=>{ fabMenu.style.display = fabMenu.style.display==='flex'?'none':'flex'; });
-document.addEventListener('click', e=>{ if(!fabBtn.contains(e.target) && !fabMenu.contains(e.target)) fabMenu.style.display='none'; });
+window.addEventListener('mousemove', (e) => {
+  if (!isPanning) return;
+  const dx = (e.clientX - startX);
+  const dy = (e.clientY - startY);
+  state.view.x = initialViewX + dx;
+  state.view.y = initialViewY + dy;
+  applyView();
+});
 
-trialBanner.addEventListener('click', ()=>{ alert('⚠️ هذه النسخة التجريبية | بعض الميزات قد تكون محدودة ⚠️'); });
+window.addEventListener('mouseup', () => {
+  isPanning = false;
+  viewport.style.cursor = 'grab';
+});
 
-if(!localStorage.getItem('welcomeShown')){
-  welcomeMsg.style.display='block';
-  setTimeout(()=>{ welcomeMsg.style.display='none'; },4000);
-  localStorage.setItem('welcomeShown','yes');
+viewport.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const zoomSensitivity = 0.001;
+  const delta = -e.deltaY * zoomSensitivity;
+  const newScale = Math.min(Math.max(0.2, state.view.scale + delta), 3);
+  
+  // Zoom towards center (simplified)
+  state.view.scale = newScale;
+  applyView();
+}, { passive: false });
+
+function applyView() {
+  world.style.transform = `translate(${state.view.x}px, ${state.view.y}px) scale(${state.view.scale})`;
+  localStorage.setItem('mindful_view', JSON.stringify(state.view));
 }
 
-/* Notes & LocalStorage */
-const colors = ['color1','color2','color3','color4','color5'];
-let notesData = JSON.parse(localStorage.getItem('notesData')||'[]');
-let stopwatchData = JSON.parse(localStorage.getItem('stopwatchData')||'null');
-
-function saveNotes(){
-  const data = [];
-  document.querySelectorAll('.note').forEach(n=>{
-    const title=n.querySelector('.title').innerText;
-    const content=n.querySelector('.content').innerText;
-    const color = n.className.split(' ')[1]||'color1';
-    const left=n.style.left; const top=n.style.top;
-    data.push({title,content,color,left,top});
-  });
-  localStorage.setItem('notesData', JSON.stringify(data));
+function resetView() {
+  state.view = { x: 0, y: 0, scale: 1 };
+  applyView();
 }
 
-function addNoteFromData(d){
-  const n = document.createElement('div');
-  n.className='note '+d.color;
-  n.style.left=d.left; n.style.top=d.top;
-  n.innerHTML=`<div class="title" contenteditable="true">${d.title}</div>
-    <div class="content" contenteditable="true">${d.content}</div>
-    <div class="note-footer">
-      <button class="icon-btn" onclick="this.parentElement.parentElement.remove(); saveNotes();">🗑️</button>
-      <div class="color-picker">
-        <div class="color-swatch color1" onclick="this.closest('.note').className='note color1'; saveNotes();"></div>
-        <div class="color-swatch color2" onclick="this.closest('.note').className='note color2'; saveNotes();"></div>
-        <div class="color-swatch color3" onclick="this.closest('.note').className='note color3'; saveNotes();"></div>
-        <div class="color-swatch color4" onclick="this.closest('.note').className='note color4'; saveNotes();"></div>
-        <div class="color-swatch color5" onclick="this.closest('.note').className='note color5'; saveNotes();"></div>
+// --- Item Factory ---
+function createItem(type) {
+  // Random position near center of current view
+  const centerX = (-state.view.x + window.innerWidth/2) / state.view.scale;
+  const centerY = (-state.view.y + window.innerHeight/2) / state.view.scale;
+  const randomOffset = (Math.random() - 0.5) * 100;
+
+  const item = {
+    id: state.nextId++,
+    type: type,
+    x: centerX + randomOffset - 150,
+    y: centerY + randomOffset - 100,
+    content: '',
+    title: type === 'note' ? 'فكرة جديدة' : (type === 'todo' ? 'المهام' : 'المؤقت'),
+    color: 'default',
+    data: type === 'todo' ? [] : (type === 'pomodoro' ? { time: 25 * 60, active: false } : { time: 0, active: false })
+  };
+  
+  state.items.push(item);
+  renderItem(item);
+  toggleFab();
+  saveState();
+}
+
+// --- Rendering ---
+function renderItem(itemData) {
+  const el = document.createElement('div');
+  el.className = 'item';
+  el.id = `item-${itemData.id}`;
+  el.style.transform = `translate(${itemData.x}px, ${itemData.y}px)`;
+  
+  // Header
+  const header = document.createElement('div');
+  header.className = 'item-header';
+  header.innerHTML = `
+    <span>${itemData.title}</span>
+    <div class="item-actions">
+      <i class="fa-solid fa-xmark action-icon" onclick="deleteItem(${itemData.id})"></i>
+    </div>
+  `;
+  
+  // Body based on type
+  const body = document.createElement('div');
+  body.className = 'item-body';
+  
+  if (itemData.type === 'note') {
+    body.contentEditable = true;
+    body.innerHTML = itemData.content;
+    body.oninput = () => { itemData.content = body.innerHTML; saveState(); };
+  } 
+  else if (itemData.type === 'todo') {
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-sm';
+    addBtn.innerText = '+ إضافة';
+    addBtn.style.width = '100%';
+    addBtn.style.marginTop = '10px';
+    addBtn.onclick = () => {
+      const text = prompt('المهمة:');
+      if(text) {
+        itemData.data.push({ text, done: false });
+        renderTodos(body, itemData);
+        saveState();
+      }
+    };
+    body.appendChild(addBtn);
+    renderTodos(body, itemData);
+  }
+  else if (itemData.type === 'pomodoro') {
+    body.innerHTML = `
+      <div class="timer-display" id="timer-${itemData.id}">25:00</div>
+      <div class="timer-controls">
+        <button class="btn-sm" onclick="toggleTimer(${itemData.id}, 'pomodoro')"><i class="fa-solid fa-play"></i></button>
+        <button class="btn-sm" onclick="resetTimer(${itemData.id}, 'pomodoro')"><i class="fa-solid fa-rotate-right"></i></button>
       </div>
-    </div>`;
-  canvas.appendChild(n);
+      <div style="text-align:center; margin-top:5px; font-size:0.8rem; opacity:0.7;">وضع التركيز</div>
+    `;
+  }
+  else if (itemData.type === 'stopwatch') {
+    body.innerHTML = `
+      <div class="timer-display" id="timer-${itemData.id}" style="color:var(--accent-secondary)">00:00</div>
+      <div class="timer-controls">
+        <button class="btn-sm" onclick="toggleTimer(${itemData.id}, 'stopwatch')"><i class="fa-solid fa-play"></i></button>
+        <button class="btn-sm" onclick="resetTimer(${itemData.id}, 'stopwatch')"><i class="fa-solid fa-rotate-right"></i></button>
+      </div>
+    `;
+  }
 
-  // Dragging with smooth animation
-  n.addEventListener('pointerdown', e=>{
-    if(e.target.closest('.color-picker') || e.target.closest('.icon-btn')) return;
-    let startX=e.clientX,startY=e.clientY;
-    let startLeft=parseFloat(n.style.left), startTop=parseFloat(n.style.top);
-    n.style.transition='transform 0.1s ease';
-    function move(ev){ 
-      const dx=ev.clientX-startX, dy=ev.clientY-startY;
-      n.style.left=(startLeft+dx)+'px';
-      n.style.top=(startTop+dy)+'px';
-    }
-    function up(){ 
-      n.style.transition='';
-      document.removeEventListener('pointermove',move); 
-      document.removeEventListener('pointerup',up); 
-      saveNotes();
-    }
-    document.addEventListener('pointermove',move);
-    document.addEventListener('pointerup',up);
+  el.appendChild(header);
+  el.appendChild(body);
+  world.appendChild(el);
+
+  // Drag Logic for Items
+  setupDrag(el, itemData);
+  
+  // Z-Index Logic
+  el.addEventListener('mousedown', () => {
+    document.querySelectorAll('.item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  });
+}
+
+function renderTodos(container, itemData) {
+  // Clear existing except add button (last child)
+  while(container.children.length > 1) {
+    container.removeChild(container.firstChild);
+  }
+  
+  itemData.data.forEach((todo, idx) => {
+    const div = document.createElement('div');
+    div.className = `todo-item ${todo.done ? 'completed' : ''}`;
+    div.innerHTML = `
+      <input type="checkbox" class="todo-check" ${todo.done ? 'checked' : ''}>
+      <span style="flex:1">${todo.text}</span>
+      <i class="fa-solid fa-trash" style="cursor:pointer; opacity:0.5; font-size:0.8rem" onclick="deleteTodo(${itemData.id}, ${idx})"></i>
+    `;
+    
+    div.querySelector('input').onchange = (e) => {
+      todo.done = e.target.checked;
+      div.classList.toggle('completed');
+      saveState();
+    };
+    
+    container.insertBefore(div, container.lastChild);
+  });
+}
+
+function deleteTodo(itemId, todoIdx) {
+  const item = state.items.find(i => i.id === itemId);
+  item.data.splice(todoIdx, 1);
+  // Re-render
+  const container = document.querySelector(`#item-${itemId} .item-body`);
+  renderTodos(container, item);
+  saveState();
+}
+
+// --- Drag & Drop Logic (Items) ---
+function setupDrag(el, itemData) {
+  const header = el.querySelector('.item-header');
+  let isDragging = false, dragStartX, dragStartY, initX, initY;
+
+  header.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    initX = itemData.x;
+    initY = itemData.y;
+    el.style.transition = 'none'; // Disable transition for direct follow
   });
 
-  n.querySelectorAll('[contenteditable]').forEach(el=>el.addEventListener('input', saveNotes));
-}
-notesData.forEach(d=>addNoteFromData(d));
-function addNote(){ const n = {title:'نوتة جديدة', content:'', color:colors[Math.floor(Math.random()*colors.length)], left:(40+Math.random()*200)+'px', top:(40+Math.random()*120)+'px'}; addNoteFromData(n); saveNotes(); }
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    // Calculate delta adjusted by current zoom scale
+    const dx = (e.clientX - dragStartX) / state.view.scale;
+    const dy = (e.clientY - dragStartY) / state.view.scale;
+    
+    itemData.x = initX + dx;
+    itemData.y = initY + dy;
+    el.style.transform = `translate(${itemData.x}px, ${itemData.y}px)`;
+  });
 
-/* To-Do List */
-function addTodo(){
-  const t = document.createElement('div');
-  t.className='note color3';
-  t.style.left='60px'; t.style.top='60px';
-  t.innerHTML=`<div class="title">To-Do List</div><div class="content"><div class="todo-list"></div></div>
-    <div class="note-footer">
-      <button class="icon-btn" onclick="this.parentElement.parentElement.remove(); saveNotes();">🗑️</button>
-      <button class="icon-btn" onclick="newTodo(this)">➕</button>
-    </div>`;
-  canvas.appendChild(t);
-  saveNotes();
+  window.addEventListener('mouseup', () => {
+    if(isDragging) {
+      isDragging = false;
+      el.style.transition = ''; // Re-enable transition
+      saveState();
+    }
+  });
 }
-function newTodo(btn){
-  const list = btn.closest('.note').querySelector('.todo-list');
-  const val = prompt('ادخل مهمة جديدة:');
-  if(val){ 
-    const item = document.createElement('div'); 
-    item.className='todo-item'; 
-    item.innerText=val; 
-    item.addEventListener('click', ()=>{
-      item.classList.toggle('completed');
-      saveNotes();
-    });
-    list.appendChild(item);
-    saveNotes();
+
+// --- Timer Logic ---
+function updateTimers() {
+  state.items.forEach(item => {
+    if (item.type === 'pomodoro' || item.type === 'stopwatch') {
+      if (item.data.active) {
+        if(item.type === 'stopwatch') item.data.time++;
+        else if (item.data.time > 0) item.data.time--;
+        
+        updateTimerDisplay(item.id, item.data.time, item.type);
+        saveState(); // Save every second (could be optimized)
+      }
+    }
+  });
+}
+
+function updateTimerDisplay(id, seconds, type) {
+  const display = document.getElementById(`timer-${id}`);
+  if (!display) return;
+  
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  const text = `${m}:${s < 10 ? '0' : ''}${s}`;
+  
+  if(type === 'pomodoro' && seconds === 0) {
+     item = state.items.find(i => i.id === id);
+     if(item) { item.data.active = false; alert("انتهى الوقت! 🍅"); }
+  }
+  
+  display.innerText = text;
+}
+
+function toggleTimer(id, type) {
+  const item = state.items.find(i => i.id === id);
+  item.data.active = !item.data.active;
+  const icon = document.querySelector(`#item-${id} .fa-play`);
+  icon.className = item.data.active ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+  saveState();
+}
+
+function resetTimer(id, type) {
+  const item = state.items.find(i => i.id === id);
+  item.data.active = false;
+  item.data.time = type === 'pomodoro' ? 25 * 60 : 0;
+  updateTimerDisplay(id, item.data.time, type);
+  document.querySelector(`#item-${id} .fa-play`).className = 'fa-solid fa-play';
+  saveState();
+}
+
+// --- Utilities ---
+function toggleFab() {
+  fabWrapper.classList.toggle('open');
+  fabBtn.classList.toggle('active');
+}
+
+fabBtn.addEventListener('click', toggleFab);
+
+function deleteItem(id) {
+  if(confirm('حذف هذا العنصر؟')) {
+    state.items = state.items.filter(i => i.id !== id);
+    document.getElementById(`item-${id}`).remove();
+    saveState();
   }
 }
 
-/* Stopwatch */
-let stopwatchInterval=0, stopwatchTime=0;
-function startStopwatch(){
-  if(document.getElementById('stopwatch')) return;
-  const sw = document.createElement('div');
-  sw.id='stopwatch'; sw.className='note color2';
-  sw.style.left='50px'; sw.style.top='50px';
-  sw.innerHTML=`<div class="title">Stopwatch</div><div class="content" id="swContent">0:00</div>
-    <div class="note-footer"><button onclick="stopStopwatch()">⏹ Stop</button></div>`;
-  canvas.appendChild(sw);
-
-  stopwatchTime = stopwatchData?.time||0;
-  stopwatchInterval=setInterval(()=>{
-    const m=Math.floor(stopwatchTime/60), s=stopwatchTime%60;
-    document.getElementById('swContent').innerText=`${m}:${s<10?'0'+s:s}`;
-    stopwatchTime++;
-    localStorage.setItem('stopwatchData', JSON.stringify({time:stopwatchTime}));
-  },1000);
+function clearCanvas() {
+  if(confirm('هل أنت متأكد من مسح كل شيء؟ لا يمكن التراجع!')) {
+    state.items = [];
+    world.innerHTML = '';
+    saveState();
+  }
 }
-function stopStopwatch(){ clearInterval(stopwatchInterval); document.getElementById('stopwatch')?.remove(); localStorage.removeItem('stopwatchData'); }
-if(stopwatchData) startStopwatch();
 
-function openLabels(){ alert('واجهة Labels هنا'); }
+function saveState() {
+  localStorage.setItem('mindful_items', JSON.stringify(state.items));
+}
+
+function exportData() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.items));
+  const downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", "mindful_backup_" + Date.now() + ".json");
+  document.body.appendChild(downloadAnchorNode);
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
+
+// Start
+init();
+
 </script>
-<script src="script.js"></script>
 </body>
 </html>
